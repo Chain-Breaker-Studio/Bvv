@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscador de Viviendas · Valencia</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <header>
+    <div class="container">
+      <h1>🏠 Buscador de Viviendas</h1>
+      <p>Valencia capital · Alquiler · Compra · Opción a compra</p>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="search-box">
+
+      <h2>¿Qué estamos buscando?</h2>
+
+      <div class="operation-buttons">
+        <button class="operation active" data-operation="alquiler">
+          🏠 Alquiler
+        </button>
+
+        <button class="operation" data-operation="compra">
+          💰 Compra
+        </button>
+
+        <button class="operation" data-operation="opcion">
+          🔑 Opción a compra
+        </button>
+      </div>
+
+      <div class="filters">
+
+        <div class="field">
+          <label for="maxPrice">Precio máximo</label>
+          <input id="maxPrice" type="number" value="1000">
+          <span id="priceUnit">€/mes</span>
+        </div>
+
+        <div class="field">
+          <label for="minRooms">Habitaciones mínimas</label>
+          <select id="minRooms">
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="minSize">Superficie mínima</label>
+          <input id="minSize" type="number" value="70">
+          <span>m²</span>
+        </div>
+
+      </div>
+
+      <div class="checks">
+
+        <label>
+          <input type="checkbox" id="elevator" checked>
+          Ascensor
+        </label>
+
+        <label>
+          <input type="checkbox" id="parking" checked>
+          Garaje / parking
+        </label>
+
+        <label>
+          <input type="checkbox" id="goodCondition" checked>
+          Buen estado
+        </label>
+
+        <label>
+          <input type="checkbox" id="valenciaCapital" checked>
+          Valencia capital
+        </label>
+
+      </div>
+
+      <h3>Zonas prioritarias</h3>
+
+      <div class="areas">
+        <span>Patraix</span>
+        <span>Campanar</span>
+        <span>Benimaclet</span>
+        <span>Extramurs</span>
+        <span>Quatre Carreres</span>
+        <span>Jesús</span>
+        <span>La Saïdia</span>
+      </div>
+
+      <button id="searchButton" class="search-button">
+        🔎 BUSCAR VIVIENDAS
+      </button>
+
+    </section>
+
+    <section class="results-section">
+
+      <div class="results-header">
+        <div>
+          <h2>Resultados</h2>
+          <p id="resultCount">Preparado para buscar</p>
+        </div>
+
+        <select id="sortResults">
+          <option value="score">Mejor puntuación</option>
+          <option value="price">Precio más bajo</option>
+          <option value="size">Mayor superficie</option>
+        </select>
+      </div>
+
+      <div id="results">
+        <div class="empty">
+          <div class="empty-icon">🏠</div>
+          <h3>Aún no hemos buscado</h3>
+          <p>Configura tus preferencias y pulsa «Buscar viviendas».</p>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>Buscador de viviendas · Valencia</p>
+      <p>Los anuncios enlazan siempre a su fuente original.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+
+</body>
+</html>
