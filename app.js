@@ -1,57 +1,14 @@
-const sampleListings = [
-  {
-    title: "Piso de 3 habitaciones en Patraix",
-    location: "Patraix, Valencia",
-    operation: "alquiler",
-    price: 895,
-    rooms: 3,
-    size: 78,
-    elevator: true,
-    parking: true,
-    condition: true,
-    score: 96,
-    source: "Ejemplo",
-    url: "#"
-  },
-  {
-    title: "Piso de 2 habitaciones en Campanar",
-    location: "Campanar, Valencia",
-    operation: "alquiler",
-    price: 920,
-    rooms: 2,
-    size: 74,
-    elevator: true,
-    parking: false,
-    condition: true,
-    score: 88,
-    source: "Ejemplo",
-    url: "#"
-  },
-  {
-    title: "Piso de 3 habitaciones en Jesús",
-    location: "Jesús, Valencia",
-    operation: "compra",
-    price: 125000,
-    rooms: 3,
-    size: 82,
-    elevator: true,
-    parking: true,
-    condition: true,
-    score: 94,
-    source: "Ejemplo",
-    url: "#"
-  }
-];
-
-let currentOperation = "alquiler";
-
-const operationButtons = document.querySelectorAll(".operation");
-const maxPrice = document.getElementById("maxPrice");
-const priceUnit = document.getElementById("priceUnit");
-const searchButton = document.getElementById("searchButton");
 const resultsContainer = document.getElementById("results");
 const resultCount = document.getElementById("resultCount");
+const maxPrice = document.getElementById("maxPrice");
+const priceUnit = document.getElementById("priceUnit");
 const sortResults = document.getElementById("sortResults");
+const searchButton = document.getElementById("searchButton");
+
+let currentOperation = "alquiler";
+let allListings = [];
+
+const operationButtons = document.querySelectorAll(".operation");
 
 operationButtons.forEach(button => {
   button.addEventListener("click", () => {
@@ -70,23 +27,62 @@ operationButtons.forEach(button => {
   });
 });
 
-searchButton.addEventListener("click", searchListings);
+searchButton.addEventListener("click", filterListings);
+sortResults.addEventListener("change", filterListings);
 
-sortResults.addEventListener("change", searchListings);
+async function loadListings() {
+  try {
+    const response = await fetch("datos.json");
 
-function searchListings() {
+    if (!response.ok) {
+      throw new Error("No se pudo cargar datos.json");
+    }
+
+    const data = await response.json();
+
+    allListings = Array.isArray(data.anuncios)
+      ? data.anuncios
+      : [];
+
+    if (data.actualizado) {
+      resultCount.textContent =
+        `Datos actualizados: ${data.actualizado}`;
+    }
+
+  } catch (error) {
+
+    console.error(error);
+
+    resultCount.textContent =
+      "No se han podido cargar los datos.";
+
+  }
+}
+
+function filterListings() {
+
   const maximumPrice = Number(maxPrice.value);
-  const minimumRooms = Number(document.getElementById("minRooms").value);
-  const minimumSize = Number(document.getElementById("minSize").value);
+  const minimumRooms =
+    Number(document.getElementById("minRooms").value);
 
-  const needElevator = document.getElementById("elevator").checked;
-  const needParking = document.getElementById("parking").checked;
-  const needGoodCondition = document.getElementById("goodCondition").checked;
+  const minimumSize =
+    Number(document.getElementById("minSize").value);
 
-  let results = sampleListings.filter(listing => {
+  const needElevator =
+    document.getElementById("elevator").checked;
 
-    if (currentOperation !== "opcion" &&
-        listing.operation !== currentOperation) {
+  const needParking =
+    document.getElementById("parking").checked;
+
+  const needGoodCondition =
+    document.getElementById("goodCondition").checked;
+
+  let results = allListings.filter(listing => {
+
+    if (
+      currentOperation !== "opcion" &&
+      listing.operation !== currentOperation
+    ) {
       return false;
     }
 
@@ -117,17 +113,15 @@ function searchListings() {
     return true;
   });
 
-  const sortType = sortResults.value;
-
-  if (sortType === "price") {
+  if (sortResults.value === "price") {
     results.sort((a, b) => a.price - b.price);
   }
 
-  if (sortType === "size") {
+  if (sortResults.value === "size") {
     results.sort((a, b) => b.size - a.size);
   }
 
-  if (sortType === "score") {
+  if (sortResults.value === "score") {
     results.sort((a, b) => b.score - a.score);
   }
 
@@ -142,21 +136,27 @@ function displayResults(results) {
       : `${results.length} viviendas encontradas`;
 
   if (results.length === 0) {
+
     resultsContainer.innerHTML = `
       <div class="empty">
         <div class="empty-icon">🔍</div>
-        <h3>No hay viviendas que cumplan todos los filtros</h3>
-        <p>Prueba a ampliar ligeramente el precio, superficie o número de habitaciones.</p>
+        <h3>No hay viviendas que cumplan los filtros</h3>
+        <p>
+          Cuando tengamos anuncios reales, aquí aparecerán
+          las mejores coincidencias.
+        </p>
       </div>
     `;
+
     return;
   }
 
   resultsContainer.innerHTML = results.map(listing => {
 
-    const price = listing.operation === "alquiler"
-      ? `${listing.price.toLocaleString("es-ES")} €/mes`
-      : `${listing.price.toLocaleString("es-ES")} €`;
+    const price =
+      listing.operation === "alquiler"
+        ? `${Number(listing.price).toLocaleString("es-ES")} €/mes`
+        : `${Number(listing.price).toLocaleString("es-ES")} €`;
 
     return `
       <article class="result-card">
@@ -164,15 +164,17 @@ function displayResults(results) {
         <div class="result-top">
 
           <div>
+
             <div class="score-label">
               ⭐ ${getScoreLabel(listing.score)}
             </div>
 
-            <h3>${listing.title}</h3>
+            <h3>${escapeHtml(listing.title)}</h3>
 
             <div class="location">
-              📍 ${listing.location}
+              📍 ${escapeHtml(listing.location)}
             </div>
+
           </div>
 
           <div class="score">
@@ -199,30 +201,43 @@ function displayResults(results) {
 
         <div class="badges">
 
-          ${listing.elevator
-            ? `<span class="badge">✓ Ascensor</span>`
-            : ""}
+          ${
+            listing.elevator
+              ? `<span class="badge">✓ Ascensor</span>`
+              : ""
+          }
 
-          ${listing.parking
-            ? `<span class="badge">✓ Garaje</span>`
-            : ""}
+          ${
+            listing.parking
+              ? `<span class="badge">✓ Garaje</span>`
+              : ""
+          }
 
-          ${listing.condition
-            ? `<span class="badge">✓ Buen estado</span>`
-            : ""}
+          ${
+            listing.condition
+              ? `<span class="badge">✓ Buen estado</span>`
+              : ""
+          }
 
         </div>
 
-        <a
-          class="view-button"
-          href="${listing.url}"
-          target="_blank"
-          rel="noopener">
-          Ver anuncio original
-        </a>
+        ${
+          listing.url
+            ? `
+              <a
+                class="view-button"
+                href="${escapeAttribute(listing.url)}"
+                target="_blank"
+                rel="noopener noreferrer">
+                Ver anuncio original
+              </a>
+            `
+            : ""
+        }
 
       </article>
     `;
+
   }).join("");
 }
 
@@ -242,3 +257,24 @@ function getScoreLabel(score) {
 
   return "PARA REVISAR";
 }
+
+function escapeHtml(value) {
+
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function escapeAttribute(value) {
+
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
+
+loadListings();
