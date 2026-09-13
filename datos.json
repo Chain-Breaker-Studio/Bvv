@@ -1,4 +1,27 @@
 {
-  "actualizado": "2026-09-13 23:33 UTC",
-  "anuncios": []
+  "actualizado": "2026-09-14",
+  "anuncios": [
+    {
+      "id": "ausias-march-001",
+      "title": "Piso en Avenida d'Ausiàs March",
+      "operation": "alquiler",
+      "price": 1000,
+      "previousPrice": null,
+      "rooms": 3,
+      "size": 97,
+      "location": "En Corts, Valencia capital",
+      "elevator": true,
+      "parking": false,
+      "condition": true,
+      "score": 88,
+      "source": "Idealista",
+      "url": "https://www.idealista.com/alquiler-viviendas/valencia-valencia/con-alquiler-de-larga-temporada/",
+      "publishedAt": "",
+      "detectedAt": "2026-09-14",
+      "isNew": true,
+      "priceDropped": false,
+      "optionToBuy": false,
+      "description": "Vivienda de 3 dormitorios y 97 m², situada en Avenida d'Ausiàs March, Valencia capital. Dispone de ascensor."
+    }
+  ]
 }
