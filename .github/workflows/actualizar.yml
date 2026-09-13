@@ -16,26 +16,40 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      - name: Comprobar datos
+      - name: Preparar entorno
         run: |
-          echo "Comprobando datos de viviendas..."
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4
 
-          if [ ! -f datos.json ]; then
-            echo "ERROR: no existe datos.json"
-            exit 1
-          fi
-
+      - name: Actualizar datos
+        run: |
           python - <<'PY'
           import json
+          from datetime import datetime, timezone
 
-          with open("datos.json", "r", encoding="utf-8") as f:
+          archivo = "datos.json"
+
+          with open(archivo, "r", encoding="utf-8") as f:
               data = json.load(f)
 
           if "anuncios" not in data:
-              raise SystemExit("ERROR: falta la propiedad anuncios")
+              data["anuncios"] = []
 
+          data["actualizado"] = datetime.now(
+              timezone.utc
+          ).strftime("%Y-%m-%d %H:%M UTC")
+
+          with open(archivo, "w", encoding="utf-8") as f:
+              json.dump(
+                  data,
+                  f,
+                  ensure_ascii=False,
+                  indent=2
+              )
+
+          print("Archivo datos.json preparado correctamente.")
           print(f"Anuncios actuales: {len(data['anuncios'])}")
-          print("Datos válidos.")
+          print(f"Última actualización: {data['actualizado']}")
           PY
 
       - name: Guardar cambios
