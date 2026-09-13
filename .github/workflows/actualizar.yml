@@ -1,0 +1,53 @@
+name: Actualizar viviendas
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 7 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Comprobar datos
+        run: |
+          echo "Comprobando datos de viviendas..."
+
+          if [ ! -f datos.json ]; then
+            echo "ERROR: no existe datos.json"
+            exit 1
+          fi
+
+          python - <<'PY'
+          import json
+
+          with open("datos.json", "r", encoding="utf-8") as f:
+              data = json.load(f)
+
+          if "anuncios" not in data:
+              raise SystemExit("ERROR: falta la propiedad anuncios")
+
+          print(f"Anuncios actuales: {len(data['anuncios'])}")
+          print("Datos válidos.")
+          PY
+
+      - name: Guardar cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add datos.json
+
+          if git diff --cached --quiet; then
+            echo "No hay cambios que guardar."
+          else
+            git commit -m "Actualización de viviendas"
+            git push
+          fi
