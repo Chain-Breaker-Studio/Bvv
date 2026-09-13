@@ -1,26 +1,4 @@
 {
   "actualizado": "",
-  "anuncios": [
-    {
-      "id": "ejemplo-001",
-      "title": "Ejemplo de vivienda",
-      "operation": "alquiler",
-      "price": 900,
-      "previousPrice": null,
-      "rooms": 3,
-      "size": 75,
-      "location": "Patraix, Valencia",
-      "elevator": true,
-      "parking": true,
-      "condition": true,
-      "score": 95,
-      "source": "ejemplo",
-      "url": "",
-      "publishedAt": "",
-      "detectedAt": "",
-      "isNew": true,
-      "priceDropped": false,
-      "optionToBuy": false
-    }
-  ]
+  "anuncios": []
 }
